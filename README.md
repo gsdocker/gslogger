@@ -1,0 +1,4 @@
+gslogger
+========
+
+gsdocker log library
