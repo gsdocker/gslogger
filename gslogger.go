@@ -194,7 +194,6 @@ func NewService(cachesize int) *LogService {
 	}
 
 	go service.loop()
-
 	return service
 }
 
