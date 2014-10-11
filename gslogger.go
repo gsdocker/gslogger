@@ -187,7 +187,7 @@ func (fd *fontend) Sink() []Sink {
 func NewService(cachesize int) *LogService {
 	service := &LogService{
 		Q:       make(chan *Msg, cachesize),
-		Flags:   ASSERT | ERROR | INFO | DEBUG | VERBOSE,
+		Flags:   ASSERT | ERROR | INFO | DEBUG | WARN | VERBOSE,
 		Loggers: make(map[string]Log),
 		Exit:    make(chan bool, 1),
 		Sinks:   []Sink{&console},
