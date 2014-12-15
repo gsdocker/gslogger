@@ -2,7 +2,6 @@ package gslogger
 
 import (
 	"fmt"
-	"runtime"
 	"time"
 
 	"github.com/mgutz/ansi"
@@ -114,23 +113,11 @@ func (sink *consoleSink) Fatal(timestamp time.Time, log Log, file string, line i
 }
 
 func init() {
-	switch runtime.GOOS {
-	case "windows":
-		donothing := func(v string) string { return v }
-		console.fatalColor = donothing
-		console.errorColor = donothing
-		console.warnColor = donothing
-		console.textColor = donothing
-		console.debugColor = donothing
-		console.verboseColor = donothing
-	default:
-		console.fatalColor = ansi.ColorFunc("red+u")
-		console.errorColor = ansi.ColorFunc("red")
-		console.warnColor = ansi.ColorFunc("magenta")
-		console.textColor = ansi.ColorFunc("white")
-		console.debugColor = ansi.ColorFunc("cyan")
-		console.verboseColor = ansi.ColorFunc("cyan+u")
-	}
-
+	console.fatalColor = ansi.ColorFunc("red+u")
+	console.errorColor = ansi.ColorFunc("red")
+	console.warnColor = ansi.ColorFunc("magenta")
+	console.textColor = ansi.ColorFunc("white")
+	console.debugColor = ansi.ColorFunc("cyan")
+	console.verboseColor = ansi.ColorFunc("cyan+u")
 	console.format = "2006-01-02 15:04:05.999999"
 }
