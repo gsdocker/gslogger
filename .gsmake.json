@@ -1,0 +1,7 @@
+{
+    "name":"github.com/gsdocker/gslogger",
+
+    "import" : [
+        {"name" : "github.com/mgutz/ansi"}
+    ]
+}
