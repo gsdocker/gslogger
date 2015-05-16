@@ -45,7 +45,7 @@ func (sink *consoleSink) Recv(msg *Msg) {
 	}
 
 	f(
-		"%s (%s:%02d) %s %s -- %s",
+		"%s (%s:%02d) [%s] %s -- %s",
 		msg.TS.Format(sink.format),
 		msg.File,
 		msg.Lines,
