@@ -1,17 +1,29 @@
 package gslogger
 
-import "github.com/gsdocker/gsconfig"
-import color "github.com/gsdocker/gslogger/console"
+import (
+	"fmt"
+	"strings"
+
+	color "github.com/gsdocker/gslogger/console"
+)
+
+// Console .
+func Console(msgfmt string, timefmt string) {
+	console.timefmt = timefmt
+	console.msgfmt = msgfmt
+}
 
 var console = newConsoleSink()
 
 type consoleSink struct {
-	format string
+	timefmt string
+	msgfmt  string
 }
 
 func newConsoleSink() *consoleSink {
 	return &consoleSink{
-		format: gsconfig.String("gslogger.timestamp", "2006-01-02 15:04:05.999999"),
+		timefmt: "2006-01-02 15:04:05.999999",
+		msgfmt:  "$ts ($file:$lines) [$tag] $source -- $content",
 	}
 }
 
@@ -44,13 +56,14 @@ func (sink *consoleSink) Recv(msg *Msg) {
 		f = color.Blue
 	}
 
-	f(
-		"%s (%s:%02d) [%s] %s -- %s",
-		msg.TS.Format(sink.format),
-		msg.File,
-		msg.Lines,
-		tag,
-		msg.Log,
-		msg.Content,
-	)
+	content := sink.msgfmt
+
+	content = strings.Replace(content, "$ts", msg.TS.Format(sink.timefmt), -1)
+	content = strings.Replace(content, "$file", msg.File, -1)
+	content = strings.Replace(content, "$lines", fmt.Sprintf("%02d", msg.Lines), -1)
+	content = strings.Replace(content, "$tag", tag, -1)
+	content = strings.Replace(content, "$source", msg.Log.String(), -1)
+	content = strings.Replace(content, "$content", msg.Content, -1)
+
+	f(content)
 }
