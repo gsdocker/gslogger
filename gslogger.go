@@ -190,7 +190,7 @@ func NewService(cachesize int) *LogService {
 		Flags:   ASSERT | ERROR | INFO | DEBUG | WARN | VERBOSE,
 		Loggers: make(map[string]Log),
 		Exit:    make(chan bool, 1),
-		Sinks:   []Sink{&console},
+		Sinks:   []Sink{console},
 	}
 
 	go service.loop()
