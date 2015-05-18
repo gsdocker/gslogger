@@ -1,6 +1,6 @@
 {
     "name":"github.com/gsdocker/gslogger",
     "import":[
-        {"name":"github.com/gsdocker/gsconfig","scope":"runtimes"}
+        {"name":"github.com/gsdocker/gsconfig","version":"v1.2","scope":"runtimes"}
     ]
 }
