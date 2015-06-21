@@ -1,5 +1,8 @@
 {
     "name":"github.com/gsdocker/gslogger",
+
+    "version":"v2.0",
+
     "import":[
         {"name":"github.com/gsdocker/gsconfig"}
     ]

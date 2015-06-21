@@ -2,6 +2,7 @@ package gslogger
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"sync"
 	"time"
@@ -90,12 +91,7 @@ func stacktrace(skip int) (string, int) {
 		line = 0
 	}
 
-	for i := len(file) - 1; i > 0; i-- {
-		if file[i] == '/' {
-			file = file[i+1:]
-			break
-		}
-	}
+	file = filepath.Join(filepath.Base(filepath.Dir(file)), filepath.Base(file))
 
 	return file, line
 }
