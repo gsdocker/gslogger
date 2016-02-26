@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
+
+	"github.com/gsdocker/gserrors"
 )
 
 //LEVEL 日志级别
@@ -20,6 +23,30 @@ const (
 	DEBUG
 	VERBOSE
 )
+
+//ParseLevel parse log level from string
+func ParseLevel(text string) (val LEVEL) {
+	for _, level := range strings.Split(text, "|") {
+		switch level {
+		case "ASSERT":
+			val |= ASSERT
+		case "ERROR":
+			val |= ERROR
+		case "WARN":
+			val |= WARN
+		case "INFO":
+			val |= INFO
+		case "DEBUG":
+			val |= DEBUG
+		case "VERBOSE":
+			val |= VERBOSE
+		default:
+			gserrors.Newf(nil, "invalide log level %s", level)
+		}
+	}
+
+	return
+}
 
 //Log 日志对象接口
 type Log interface {

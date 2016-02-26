@@ -19,9 +19,6 @@ const (
 	CompressDay    = 0        //压缩几天前的日志
 )
 
-//日志文件目录
-var LogDir = os.Getenv("HOME") + "/gocode/log"
-
 //Filelog 文件日志结构
 type Filelog struct {
 	flag        byte
@@ -38,7 +35,7 @@ type Filelog struct {
 
 //SetLogDir 设置日志目录
 func SetLogDir(dir string) {
-	LogDir = dir
+	logDir = dir
 }
 
 //NewFilelog 建立文件日志对象
@@ -54,7 +51,7 @@ func NewFilelog(ln string, des string, cutsize int64) *Filelog {
 	fl.date = fmt.Sprintf("%04d%02d%02d", date.Year(), date.Month(), date.Day())
 	fl.logname = ln
 	fl.description = des
-	fl.filename = fmt.Sprintf("%s/%s_%s_%s_%d.log", LogDir, fl.logname, fl.description, fl.date, fl.num)
+	fl.filename = fmt.Sprintf("%s/%s_%s_%s_%d.log", logDir, fl.logname, fl.description, fl.date, fl.num)
 	fl.logfile = nil
 	fl.flag = 0xFF
 	fl.timeformat = "2006-01-02 15:04:05.000000"
@@ -116,7 +113,10 @@ func (fl *Filelog) Getlogger() {
 			if fl.date != temp {
 				fl.date = temp
 			}
-			fl.filename = fmt.Sprintf("%s/%s_%s_%s_%d.log", LogDir, fl.logname, fl.description, fl.date, fl.num)
+			fl.filename = fmt.Sprintf("%s/%s_%s_%s_%d.log", logDir, fl.logname, fl.description, fl.date, fl.num)
+
+			println(fl.filename)
+
 			fl.num++
 			fl.logfile = open(fl.filename, cutsize)
 			if fl.logfile != nil {
@@ -149,7 +149,7 @@ func (fl *Filelog) Recv(msg *Msg) {
 	case VERBOSE:
 		logrank = "V"
 	default:
-		logrank = "Uknown"
+		logrank = "U"
 	}
 	if fl.logfile != nil {
 		fmt.Fprintf(fl.logfile, "%s (%s:%d):[%s] %s -- %s\n", msg.TS.Format(fl.timeformat), msg.File, msg.Lines, logrank, msg.Log, msg.Content)
@@ -161,7 +161,7 @@ func (fl *Filelog) Recv(msg *Msg) {
 //MakeDir 初始化日志目录
 func MakeDir() {
 	var temp string
-	temp = LogDir
+	temp = logDir
 	if err := os.Mkdir(temp, os.ModePerm); err != nil {
 		if !os.IsExist(err) {
 			log.Fatal(err)
@@ -172,7 +172,7 @@ func MakeDir() {
 //CompressLog 压缩给定名字日志文件，现在仅将时间线以前的日志文件压到一起，不区分名字。可添加根据名字分别压缩的功能
 func CompressLog(logname, description string) bool {
 
-	dirname := LogDir
+	dirname := logDir
 
 	date := time.Now()
 	date = date.AddDate(0, 0, CompressDay)
@@ -251,7 +251,7 @@ func CompressLog(logname, description string) bool {
 
 //UncompressLog 解压缩指定日期日志 eg.theday:20140808
 func UncompressLog(theday string) bool {
-	fr, err := os.Open(LogDir + "/" + theday + ".tar.gz")
+	fr, err := os.Open(logDir + "/" + theday + ".tar.gz")
 	if err != nil {
 		log.Println("open tar file failed.", err)
 		return false
@@ -273,7 +273,7 @@ func UncompressLog(theday string) bool {
 			log.Println(err)
 			return false
 		}
-		fw, err := os.OpenFile(LogDir+"/"+h.Name, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0644)
+		fw, err := os.OpenFile(logDir+"/"+h.Name, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0644)
 		if err != nil {
 			log.Println(err)
 			return false
@@ -285,7 +285,7 @@ func UncompressLog(theday string) bool {
 			return false
 		}
 	}
-	err = os.Remove(LogDir + "/" + theday + ".tar.gz")
+	err = os.Remove(logDir + "/" + theday + ".tar.gz")
 	if err != nil {
 		log.Println("remove file failed.", err)
 		return false
